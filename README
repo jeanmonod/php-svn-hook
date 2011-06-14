@@ -1,1 +1,43 @@
 PHP SVN HOOKS
+=============
+
+This micro projet allow you to easily write SVN pre_commit hook in PHP.
+
+Installation
+------------
+
+ * Just deploy this project to your server.
+ * Copy the pre_commit.tmpl to the repository of your choice, rename it to pre_commit
+ * Edit and adapt the pre_commmit script to match the project directory
+
+Create your own hook
+--------------------
+
+ * Add a new file XXXCheck.class.php in the checks directory
+ * Extend the class BasePreCommitCheck
+ * Override the mandatory methods:
+   *  getTitle();
+   *  renderErrorSummary();
+ * Override the methods of your choice, according to what you wanna test:
+   * checkSvnComment($comment);
+   * checkFileLine($file, $pos, $content);
+   * checkFullFile($lines, $filename)
+ 
+
+Testing
+-------
+
+As it's can be panful to process a commit each time you wanna test, there is test suite avaliable based on lime.
+Just go to the root folder and run
+    php test/run_all.php
+
+To run a specific check test, call directly the test file, for exemple:
+    php test/checks/NoTabCheckTest.php
+    
+To write your own test, just copy and paste and existing test file, and adapt it!
+ 
+
+How to contribute
+-----------------
+
+If you want to contribute please fell to fork or to send your comment. I will be happy to complete this repo according to your needs...

@@ -2,9 +2,7 @@
 <html>
 <head>
   <meta charset='utf-8'>
-
   <title>jeanmonod/php-svn-hook @ GitHub</title>
-
   <style type="text/css">
     body {
       margin-top: 1.0em;
@@ -32,9 +30,7 @@
 
 <body>
   <a href="http://github.com/jeanmonod/php-svn-hook"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
-
   <div id="container">
-
     <div class="download">
       <a href="http://github.com/jeanmonod/php-svn-hook/zipball/master">
         <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
@@ -42,20 +38,12 @@
         <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
     </div>
 
-    <h1><a href="http://github.com/jeanmonod/php-svn-hook">php-svn-hook</a>
-      <span class="small">by <a href="http://github.com/jeanmonod">jeanmonod</a></span></h1>
+    <h1><a href="http://github.com/jeanmonod/php-svn-hook">php-svn-hook</a></h1>
 
-    <div class="description">
-      Micro PHP framework to help you writting simple SVN hooks
-    </div>
-
-    <h2>Dependencies</h2>
-<p>none</p>
-<h2>Authors</h2>
-<p>Jeanmonod David (david.jeanmonod@idael.ch)<br/><br/>      </p>
-<h2>Contact</h2>
-<p>Jeanmonod David (david@idael.ch)<br/>      </p>
-
+    <span class="small">
+      Micro PHP framework to help you writting simple SVN hooks<br>
+      <i>by <a href="http://github.com/jeanmonod">David Jeanmonod</a></i>
+    </span>
 
     <h2>Download</h2>
     <p>
@@ -67,6 +55,78 @@
       by running:
       <pre>$ git clone git://github.com/jeanmonod/php-svn-hook</pre>
     </p>
+
+    <h2>Installation</h2>
+    <ul>
+      <li>Just deploy this project to your SVN server.</li>
+      <li>Copy the pre_commit.tmpl to the repository of your choice, rename it to pre_commit</li>
+      <li>Edit and adapt this script to match the project directory</li>
+    </ul>
+      
+    <h2>Usage</h2>
+    <p>Initially the project is provide with two simple checks:</p>
+    <ol>
+      <li>Force adding a commit message</li>
+      <li>Refuse tabulations in commit</li>
+    </ol>
+    <p>If you ewant to do more, you will have to develop your own checks</p>
+      
+    <h2>Exemple</h2>
+    Let's try to commit a file with tabs:
+    <pre>
+[david]/Users/david/myProject/> svn commit -m "Add a file with tabs"
+Sending        tab_file.php
+Transmitting file data .svn: Commit failed (details follow):
+svn: Commit blocked by pre-commit hook (exit code 1) with output:
+
+PRE COMMIT HOOK FAIL:
+The following pre commit check fail:
+ * Reject tabulation in files: 1 tabs found
+
+DETAIL OF THE CHECKS ERRORS:
+Reject tabulation in files:
+trunk/tab_file.php:21 Char 16 is a tab
+
+If you want to force commit tabs, add the parameter --allow-tabs in your comment
+</pre>
+
+    <h2>Create your own checks</h2>
+    You will probably want to create your own checks, that's easy! 
+    <ul>
+      <li>Add a new file XXXCheck.class.php in the checks directory</li>
+      <li>Extend the class BasePreCommitCheck</li>
+      <li>Override the mandatory methods:
+        <ul>
+          <li>getTitle()</li>
+          <li>renderErrorSummary()</li>
+        </ul>
+      </li>
+      <li>Override the methods of your choice, according to what you want to test:
+        <ul>
+          <li>checkSvnComment($comment)</li>
+          <li>checkFileLine($file, $pos, $content)</li>
+          <li>checkFullFile($lines, $filename)</li>
+        </ul>
+      </li>
+    </ul>
+ 
+
+    <h2>Testing</h2>
+
+    <p>As it's can be panful to process a commit each time you want to test your scripts, there is test suite avaliable based on lime (extracted from symfony 1.4).<p>
+    <p>Just go to the root folder and run:
+    <pre>php test/run_all.php</pre>
+
+To run a specific check test, call directly the test file, for exemple:
+    php test/checks/NoTabCheckTest.php
+    
+To write your own test, just copy and paste and existing test file, and adapt it!
+ 
+
+How to contribute
+-----------------
+
+If you want to contribute please fell to fork or to send your comment. I will be happy to complete this repo according to your needs...
 
     <div class="footer">
       get the source code on GitHub : <a href="http://github.com/jeanmonod/php-svn-hook">jeanmonod/php-svn-hook</a>

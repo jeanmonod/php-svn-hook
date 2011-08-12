@@ -3,7 +3,12 @@ require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'BasePreCommitCheck.class.php
 
 class NoTabsCheck extends BasePreCommitCheck {
   
-  public $extensionsToCheck = array('php', 'js', 'yml', 'html', 'htm');
+  public $extensionsToCheck = array(
+    'java', 'js', 'php',
+    'ini', 'xml', 'yml', 
+    'htm', 'html',
+    'sh', 'bat'
+  );
   
   function getTitle(){
     return "Reject tabulation in files";

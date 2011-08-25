@@ -51,13 +51,18 @@ $errorMsg = <<< EOC
 PRE COMMIT HOOK FAIL:
 The following pre commit check fail:
  * Reject comment: Invalid
+ * Reject commit that does not mention any ticket number reference: No ticket number given.
 
 DETAIL OF THE CHECKS ERRORS:
 Reject comment:
 Minimun size is 5 characters
 
+Reject commit that does not mention any ticket number reference:
+Basic regexp check failed to find any ticket number
+If you want to force commit without referring any ticket, add the parameter --no-ticket in your comment
 
 EOC;
+
 $cmd = "php $scriptPath emptyComment trxNum --test-mode";
 execute($cmd, $output, $error, $returnCode);
 $t->is($returnCode, 1, "On error, return code is 1");

@@ -1,19 +1,39 @@
 <?php
 
-// Get the error output
-$stderr = defined('STDERR') ? STDERR : fopen('php://stderr', 'w');
-
-// Read arguments
-if (count($argv) < 3 || count($argv) > 4){
-  fwrite($stderr, "PRE COMMIT HOOK FAIL, PLEASE CONTACT SERVER ADMIN.\n (Usage: script_name.php SVN_REPO SVN_TRX)\n");
+// Exit by displaying an error
+function errorExit($msg){
+  $stderr = defined('STDERR') ? STDERR : fopen('php://stderr', 'w');
+  fwrite($stderr, "PRE COMMIT HOOK FAIL, PLEASE CONTACT SERVER ADMIN.\n ($msg)\n");
   exit(1);
+}
+
+// Read arguments and options
+if (count($argv) < 3){
+  errorExit("Missing arguments! Usage: script_name.php SVN_REPO SVN_TRX [ --opt]*");
 }
 $repo = $argv[1];
 $trx = $argv[2];
-$testMode = isset($argv[3]) && $argv[3]=='--test-mode';
+$options = array();
+for ($i=3; $i < count($argv); $i++){
+  if (strpos($argv[$i], '--') !== 0){
+    errorExit("Invalid argument [".$argv[$i]."], all options must start by '--'");
+  }
+  if (strpos($argv[$i], '=') === false){
+    $optName = $argv[$i];
+    $optValue = true;
+  }
+  else {
+    list($optName, $optValue) = explode('=', $argv[$i]);
+  }
+  $options[substr($optName,2)] = $optValue;
+} 
+$invalid = array_diff(array_keys($options), array('test-mode'));
+if (count($invalid)) {
+  errorExit("Invalid option name ".json_encode($invalid));
+}
 
 // Include the SVN base functions
-require(dirname(__FILE__).DIRECTORY_SEPARATOR.'svn'.DIRECTORY_SEPARATOR.'svn_functions.'.($testMode?'test.':'').'php');
+require(dirname(__FILE__).DIRECTORY_SEPARATOR.'svn'.DIRECTORY_SEPARATOR.'svn_functions.'.(isset($options['test-mode'])?'test.':'').'php');
 
 // Read the message and the file changed
 $mess = svn_get_commit_message($repo, $trx);
@@ -54,5 +74,6 @@ foreach ($checkWithError as $check){
   $detail .= $check->getTitle().":\n".$check->renderErrorDetail()."\n".$check->renderInstructions()."\n";
 }
 $message = "\n\nPRE COMMIT HOOK FAIL:\n".$resume.$detail;
+$stderr = defined('STDERR') ? STDERR : fopen('php://stderr', 'w');
 fwrite($stderr, $message);
 exit(1);

@@ -58,7 +58,6 @@ Minimum size is 5 characters
 
 
 EOC;
-
 $cmd = "php $scriptPath emptyComment trxNum --test-mode";
 execute($cmd, $output, $error, $returnCode);
 $t->is($returnCode, 1, "On error, return code is 1");

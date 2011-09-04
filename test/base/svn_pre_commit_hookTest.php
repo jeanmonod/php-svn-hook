@@ -51,15 +51,11 @@ $errorMsg = <<< EOC
 PRE COMMIT HOOK FAIL:
 The following pre commit check fail:
  * Reject minimalistic comment: Commit message empty or too short
- * Reject commit that does not mention any ticket number reference: No ticket number given.
 
 DETAIL OF THE CHECKS ERRORS:
 Reject minimalistic comment:
 Minimum size is 5 characters
 
-Reject commit that does not mention any ticket number reference:
-Basic regexp check failed to find any ticket number
-If you want to force commit without referring any ticket, add the parameter --no-ticket in your comment
 
 EOC;
 

@@ -34,12 +34,43 @@ class PreCommitManager {
     }
 
     // Reject invalid one
-    $invalid = array_diff(array_keys($this->options), array('test-mode', 'key-value-option'));
+    $invalid = array_diff(array_keys($this->options), array('test-mode', 'include', 'exclude'));
     if (count($invalid)) {
       throw new Exception("Invalid option name ".json_encode($invalid));
     }
     
     return $this->options;
+  }
+  
+  public function getChecksToProcess(){
+    
+    // Build up the list
+    if (isset($this->options['include'])){
+      $checks = explode(':', $this->options['include']);
+    }
+    else {
+      $checks = array();
+      foreach (scandir($this->getCheckDirectory()) as $scriptName) {
+        if ( substr($scriptName,strlen($scriptName)-15) == 'Check.class.php' && $scriptName != "BasePreCommitCheck.class.php") {
+          $checks[] = substr($scriptName,0,strlen($scriptName)-15);
+        }
+      }
+    }
+    
+    // Remove exculded
+    if (isset($this->options['exclude'])){
+      $exculded = explode(':', $this->options['exclude']);
+      if (count(array_diff($exculded, $checks)) > 0){
+        throw new Exception("Invalid check to exculde: ".json_encode(array_diff($exculded, $checks)));
+      }        
+      $checks = array_diff($checks, $exculded);
+    }
+    
+    return $checks;
+  }
+  
+  public function getCheckDirectory(){
+    return dirname(__FILE__).DIRECTORY_SEPARATOR.'checks';
   }
   
 
@@ -55,22 +86,19 @@ class PreCommitManager {
     $fileChanges = svn_get_commited_files($this->repoName, $this->trxNum);
 
     // Run all the script
-    $scriptDir = dirname(__FILE__).DIRECTORY_SEPARATOR.'checks';
     $this->checksWithError = array();
-    foreach (scandir($scriptDir) as $scriptName) {
-      if (substr($scriptName,strlen($scriptName)-10)=='.class.php'  && $scriptName != "BasePreCommitCheck.class.php") {
-        try {
-          require_once $scriptDir.DIRECTORY_SEPARATOR.$scriptName;
-          $className = substr($scriptName,0,strlen($scriptName)-10);
-          $check = new $className($mess);
-          $check->runCheck($fileChanges);
-          if ($check->fail()){
-            $this->checksWithError[] = $check;
-          }
+    foreach ($this->getChecksToProcess() as $checkName) {
+      try {
+        require_once $this->getCheckDirectory().DIRECTORY_SEPARATOR.$checkName.'Check.class.php';
+        $className = $checkName.'Check';
+        $check = new $className($mess);
+        $check->runCheck($fileChanges);
+        if ($check->fail()){
+          $this->checksWithError[] = $check;
         }
-        catch (Exception $e){
-          throw new Exception("Error in the subscript: $scriptName\n");
-        }
+      }
+      catch (Exception $e){
+        throw new Exception("Error in the check subscript: $checkName\n");
       }
     }
   }

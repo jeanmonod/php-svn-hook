@@ -1,2 +1,11 @@
 #!/bin/sh
-php /{PATH_TO_PHP_SVN_HOOKS_DIR}/svn_pre_commit_hook.php $1 $2
+#
+# The svn_pre_commit_hook.php must be call with $1 and $2 mandatory parameters.
+#
+# After that you can specifie some aditionnal parameters:
+#  * --inculde=XX:YY:ZZZ   To list the checks that must be inculde for that repo 
+#                           (without include all checks are process)
+#  * --exculde=XX:ZZZ      To list the checks that must be ignore for that repo
+#
+
+php /{PATH_TO_PHP_SVN_HOOKS_DIR}/svn_pre_commit_hook.php $1 $2 --include=EmptyComment:NoTabs

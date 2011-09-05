@@ -45,7 +45,7 @@ $t->is($error, "PRE COMMIT HOOK SYSTEM ERROR, PLEASE CONTACT SERVER ADMIN.\n (In
 
 
 // First test with a working commit
-$cmd = "php $scriptPath repoName trxNum --test-mode";
+$cmd = "php $scriptPath repoName trxNum --test-mode --include=EmptyComment";
 execute($cmd, $output, $error, $returnCode);
 $t->is($returnCode, 0, "On success, return code is 0");
 $t->is($output, "All pre commit checks successed", "On success a success message is return");
@@ -53,6 +53,10 @@ $t->is($error, "", "On success, no error output on stderr");
 
 
 // Second test with a fail commit, due to an empty comment
+$cmd = "php $scriptPath emptyComment trxNum --test-mode --include=EmptyComment";
+execute($cmd, $output, $error, $returnCode);
+$t->is($returnCode, 1, "On error, return code is 1");
+$t->is($output, "", "On error, no echo on the stdout");
 $errorMsg = <<< EOC
 
 
@@ -66,8 +70,4 @@ Minimum size is 5 characters
 
 
 EOC;
-$cmd = "php $scriptPath emptyComment trxNum --test-mode";
-execute($cmd, $output, $error, $returnCode);
-$t->is($returnCode, 1, "On error, return code is 1");
-$t->is($output, "", "On error, no echo on the stdout");
 $t->is($error, $errorMsg, "A well formated message is generated on stderr");

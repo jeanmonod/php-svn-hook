@@ -50,11 +50,11 @@ $errorMsg = <<< EOC
 
 PRE COMMIT HOOK FAIL:
 The following pre commit check fail:
- * Reject comment: Invalid
+ * Reject minimalistic comment: Commit message empty or too short
 
 DETAIL OF THE CHECKS ERRORS:
-Reject comment:
-Minimun size is 5 characters
+Reject minimalistic comment:
+Minimum size is 5 characters
 
 
 EOC;

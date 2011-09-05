@@ -14,8 +14,8 @@ $t->ok(!$c->fail(),"The check is not failling if there is no tab in the files");
 $c = new EmptyCommentCheck('toto');
 $c->runCheck(array());
 $t->ok($c->fail(),"The check works when comment is to small");
-$t->is($c->renderErrorSummary(), "Invalid", "A valid summary message is return");
-$t->is($c->renderErrorDetail(), "Minimun size is 5 characters", "A valid detail message is return");
+$t->is($c->renderErrorSummary(), "Commit message empty or too short", "A valid summary message is return");
+$t->is($c->renderErrorDetail(), "Minimum size is 5 characters", "A valid detail message is return");
 
 $c = new EmptyCommentCheck('Long comment');
 $c->runCheck(array());

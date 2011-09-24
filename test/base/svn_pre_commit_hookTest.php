@@ -52,8 +52,8 @@ $t->is($output, "All pre commit checks successed", "On success a success message
 $t->is($error, "", "On success, no error output on stderr");
 
 
-// Second test with a fail commit, due to EmptyComment and TicketReference check failures
-$cmd = "php $scriptPath emptyComment trxNum --test-mode --include=EmptyComment:TicketReference";
+// Second test with a fail commit, due to an empty comment
+$cmd = "php $scriptPath emptyComment trxNum --test-mode --include=EmptyComment";
 execute($cmd, $output, $error, $returnCode);
 $t->is($returnCode, 1, "On error, return code is 1");
 $t->is($output, "", "On error, no echo on the stdout");
@@ -63,15 +63,11 @@ $errorMsg = <<< EOC
 PRE COMMIT HOOK FAIL:
 The following pre commit check fail:
  * Reject minimalistic comment: Commit message empty or too short
- * Reject commit that does not mention any ticket number reference: No ticket number given.
 
 DETAIL OF THE CHECKS ERRORS:
 Reject minimalistic comment:
 Minimum size is 5 characters
 
-Reject commit that does not mention any ticket number reference:
-Basic regexp check failed to find any ticket number
-If you want to force commit without referring any ticket, add the parameter --no-ticket in your comment
 
 EOC;
 $t->is($error, $errorMsg, "A well formated message is generated on stderr");

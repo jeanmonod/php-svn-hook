@@ -15,11 +15,10 @@ class TicketReferenceCheck extends BasePreCommitCheck {
     if ( $this->hasOption('no-ticket') ){
       return;
     }
-    $match_total = preg_match_all("/#\d+/", $comment, $matches);
+    $match_total = preg_match_all("/(^|\W+|\s+)(#\d+)(\W+|\s+|$)/", $comment, $matches);
     if ( $match_total == 0 ) {
-      return "Basic regexp check failed to find any ticket number";
+      return "Impossible to find any ticket reference in the commit message";
     }
-    // TODO: check ticket number found against Redmine Issues...
   }
   
   public function renderInstructions(){

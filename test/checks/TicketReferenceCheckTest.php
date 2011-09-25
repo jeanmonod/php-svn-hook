@@ -2,52 +2,52 @@
 
 // Init lime
 include_once dirname(__FILE__).'/../lime/lime.php';
-$t = new lime_test(14, new lime_output_color());
+$t = new lime_test(15, new lime_output_color());
 
 // Load dependency
 include_once dirname(__FILE__).'/../../checks/TicketReferenceCheck.class.php';
 
-$c = new TicketReferenceCheck('Commit with One Ticket Number, refs #1234');
+$c = new TicketReferenceCheck("Commit with One Ticket Number, refs #1234");
 $c->runCheck(array());
 $t->ok(!$c->fail(), "Valid commit with One Ticket reference");
  
-$c = new TicketReferenceCheck('Closes #62373. Commit with Three Ticket Numbers (see also #1 and #387)');
+$c = new TicketReferenceCheck("Closes #62373. Commit with Three Ticket Numbers (see also #1 and #387)");
 $c->runCheck(array());
 $t->ok(!$c->fail(), "Valid commit with Three Ticket references");
 
-$c = new TicketReferenceCheck('Commit with One Ticket Number, but without # char. Ticket 927');
+$c = new TicketReferenceCheck("Commit with One Ticket Number, but without # char. Ticket 927");
 $c->runCheck(array());
 $t->ok($c->fail(), "Invalid commit with One Ticket Number, but without # char");
 
-$c = new TicketReferenceCheck('Commit without reference to any ticket');
+$c = new TicketReferenceCheck("Commit without reference to any ticket");
 $c->runCheck(array());
 $t->ok($c->fail(), "Invalid commit because no ticket is referenced.");
 
-$c = new TicketReferenceCheck('Forced commit without reference to any ticket.\n--no-ticket');
+$c = new TicketReferenceCheck("Forced commit without reference to any ticket.\n--no-ticket");
 $c->runCheck(array());
 $t->ok(!$c->fail(), "Check skipped if option --no-ticket is given");
 
-$c = new TicketReferenceCheck('see http://www.test.com/cms#1-page');
+$c = new TicketReferenceCheck("see http://www.test.com/cms#1-page");
 $c->runCheck(array());
 $t->ok($c->fail(), "Invalid commit with a #<number> pattern part of an URL");
 
-$c = new TicketReferenceCheck('see also http://www.split.me/#146-2');
+$c = new TicketReferenceCheck("see also http://www.split.me/#146-2");
 $c->runCheck(array());
 $t->ok($c->fail(), "Another Invalid commit with a #<number> pattern part of an URL");
 
-$c = new TicketReferenceCheck('Workaround to known issue https://github.com/rails/rails#666\n\nFix PR #4');
+$c = new TicketReferenceCheck("Workaround to known issue https://github.com/rails/rails#666\n\nFix PR #4");
 $c->runCheck(array());
 $t->ok(!$c->fail(), "Valid commit with two #<number> patterns, once in an URL, but also in a ticket reference");
 
-$c = new TicketReferenceCheck('#1234');
+$c = new TicketReferenceCheck("#1234");
 $c->runCheck(array());
 $t->ok(!$c->fail(), "Very short comment, without spaces, without any keyword");
 
-$c = new TicketReferenceCheck('fix #1');
+$c = new TicketReferenceCheck("fix #1");
 $c->runCheck(array());
 $t->ok(!$c->fail(), "Single line comment with nothing AFTER #<number> pattern");
 
-$c = new TicketReferenceCheck('#9 fixed');
+$c = new TicketReferenceCheck("#9 fixed");
 $c->runCheck(array());
 $t->ok(!$c->fail(), "Single line comment with nothing BEFORE #<number> pattern");
 
@@ -59,6 +59,10 @@ $c = new TicketReferenceCheck("fix#5932");
 $c->runCheck(array());
 $t->ok($c->fail(), "Words cannot be collated to ticket reference without any space");
 
-$c = new TicketReferenceCheck("#13, #5932 & #921 #5821 - #453\n#178");
+$c = new TicketReferenceCheck("--no-tabs\n#178");
 $c->runCheck(array());
-$t->ok(!$c->fail(), "Blank characters needed between Ticket references are mandatory");
+$t->ok(!$c->fail(), "\\n (new line) character is matched by \\s");
+
+$c = new TicketReferenceCheck("#13,#5932&#921#5821-#453");
+$c->runCheck(array());
+$t->ok($c->fail(), "Tickets references must be cleanly separated with blank characters");

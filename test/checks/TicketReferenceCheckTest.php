@@ -31,7 +31,7 @@ $c = new TicketReferenceCheck('see http://www.test.com/cms#1-page');
 $c->runCheck(array());
 $t->ok($c->fail(), "Invalid commit with a #<number> pattern part of an URL");
 
-$c = new TicketReferenceCheck('see also http://www.other-project.org/hash_browsing#146\nNo ticket');
+$c = new TicketReferenceCheck('see also http://www.split.me/#146-2');
 $c->runCheck(array());
 $t->ok($c->fail(), "Another Invalid commit with a #<number> pattern part of an URL");
 
@@ -51,7 +51,7 @@ $c = new TicketReferenceCheck('#9 fixed');
 $c->runCheck(array());
 $t->ok(!$c->fail(), "Single line comment with nothing BEFORE #<number> pattern");
 
-$c = new TicketReferenceCheck("Fixed issues:\n-#331\n*#793\nOne more line");
+$c = new TicketReferenceCheck("Fixed issues:\n- #331\n* #793\nOne more line");
 $c->runCheck(array());
 $t->ok(!$c->fail(), "Multi-line comment for regexp corner cases");
 
@@ -59,6 +59,6 @@ $c = new TicketReferenceCheck("fix#5932");
 $c->runCheck(array());
 $t->ok($c->fail(), "Words cannot be collated to ticket reference without any space");
 
-$c = new TicketReferenceCheck("#13,#5932&#921#5821-#453");
+$c = new TicketReferenceCheck("#13, #5932 & #921 #5821 - #453\n#178");
 $c->runCheck(array());
-$t->ok(!$c->fail(), "Ugly, Minimalistic (or even Implicit) separations between Ticket references are allowed");
+$t->ok(!$c->fail(), "Blank characters needed between Ticket references are mandatory");

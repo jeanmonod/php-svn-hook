@@ -2,7 +2,7 @@
 
 // Init lime
 include_once dirname(__FILE__).'/../lime/lime.php';
-$t = new lime_test(15, new lime_output_color());
+$t = new lime_test(17, new lime_output_color());
 
 // Load dependency
 include_once dirname(__FILE__).'/../../checks/TicketReferenceCheck.class.php';
@@ -63,6 +63,15 @@ $c = new TicketReferenceCheck("--no-tabs\n#178");
 $c->runCheck(array());
 $t->ok(!$c->fail(), "\\n (new line) character is matched by \\s");
 
-$c = new TicketReferenceCheck("#13,#5932&#921#5821-#453");
+$c = new TicketReferenceCheck("#5932&#921#5821-#453");
 $c->runCheck(array());
 $t->ok($c->fail(), "Tickets references must be cleanly separated with blank characters");
+
+$c = new TicketReferenceCheck("Feature #93: first prototype");
+$c->runCheck(array());
+$t->ok(!$c->fail(), "Some separators can be collated to the right side, like ':' in 'ref #575: Apply workaround...'");
+
+$c = new TicketReferenceCheck("Fix #33, but code refactoring still needed");
+$c->runCheck(array());
+$t->ok(!$c->fail(), "Some separators can be collated to the right side, like ',' in 'Fix #33, but...'");
+

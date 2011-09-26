@@ -15,7 +15,7 @@ class TicketReferenceCheck extends BasePreCommitCheck {
     if ( $this->hasOption('no-ticket') ){
       return;
     }
-    $match_total = preg_match_all("/(^|\s+)(#\d+)(\s+|$)/", $comment, $matches);
+    $match_total = preg_match_all("/(^|\s+)(#\d+)(:|,|\s+|$)/", $comment, $matches);
     if ( $match_total == 0 ) {
       return "Impossible to find any ticket reference in the commit message";
     }

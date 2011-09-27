@@ -2,7 +2,7 @@
 
 // Init lime
 include_once dirname(__FILE__).'/../lime/lime.php';
-$t = new lime_test(17, new lime_output_color());
+$t = new lime_test(19, new lime_output_color());
 
 // Load dependency
 include_once dirname(__FILE__).'/../../checks/TicketReferenceCheck.class.php';
@@ -74,4 +74,12 @@ $t->ok(!$c->fail(), "Some separators can be collated to the right side, like ':'
 $c = new TicketReferenceCheck("Fix #33, but code refactoring still needed");
 $c->runCheck(array());
 $t->ok(!$c->fail(), "Some separators can be collated to the right side, like ',' in 'Fix #33, but...'");
+
+$c = new TicketReferenceCheck("Fix a typo in i18n file, that resolves #59321.");
+$c->runCheck(array());
+$t->ok(!$c->fail(), "Some separators can be collated to the right side, like '.' in '... that fixes #5322.'");
+
+$c = new TicketReferenceCheck("Redmine commit message style (#343, #2100)");
+$c->runCheck(array());
+$t->ok(!$c->fail(), "Ticket references can be enclosed between parentheses (...)");
 

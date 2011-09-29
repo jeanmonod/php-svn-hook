@@ -55,17 +55,17 @@ $c = new TicketReferenceCheck("Fixed issues:\n- #331\n* #793\nOne more line");
 $c->runCheck(array());
 $t->ok(!$c->fail(), "Multi-line comment for regexp corner cases");
 
-$c = new TicketReferenceCheck("fix#5932");
-$c->runCheck(array());
-$t->ok($c->fail(), "Words cannot be collated to ticket reference without any space");
-
 $c = new TicketReferenceCheck("--no-tabs\n#178");
 $c->runCheck(array());
-$t->ok(!$c->fail(), "\\n (new line) character is matched by \\s");
+$t->ok(!$c->fail(), "Ticket reference just after a line break");
+
+$c = new TicketReferenceCheck("fix#5932");
+$c->runCheck(array());
+$t->ok(!$c->fail(), "Ugly, but valid: Words can be collated to ticket reference without any space");
 
 $c = new TicketReferenceCheck("#5932&#921#5821-#453");
 $c->runCheck(array());
-$t->ok($c->fail(), "Tickets references must be cleanly separated with blank characters");
+$t->ok(!$c->fail(), "Ugly, but valid: A sequence of Ticket references without any separator, except # prefixes.");
 
 $c = new TicketReferenceCheck("Feature #93: first prototype");
 $c->runCheck(array());

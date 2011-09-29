@@ -15,9 +15,17 @@ class TicketReferenceCheck extends BasePreCommitCheck {
     if ( $this->hasOption('no-ticket') ){
       return;
     }
-    $match_total = preg_match_all("/(^|\s+|\()(#\d+)(\.|:|,|\)|\s+|$)/", $comment, $matches);
-    if ( $match_total == 0 ) {
+
+    // 1) find all URL containing #<number> (protocol://server.domain.ch/path/to#<number>)
+    $match_url = preg_match_all("/\w+:\/\/\S+#\d+/", $comment, $url_matches);
+
+    // 2) find all #<number> patterns (URL patterns of point 1 included)
+    $match_total = preg_match_all("/#\d+/", $comment, $matches);
+    
+    if ($match_total == 0) {
       return "Impossible to find any ticket reference in the commit message";
+    } else if ($match_total == $match_url) {
+      return "Impossible to find any ticket reference in the commit message (Note: URL are invalid references, please use #<ticket-id> syntax)";
     }
   }
   

@@ -2,7 +2,7 @@
 
 // Init lime
 include_once dirname(__FILE__).'/../lime/lime.php';
-$t = new lime_test(5, new lime_output_color());
+$t = new lime_test(4, new lime_output_color());
 
 // Load dependency
 include_once dirname(__FILE__).'/../../checks/EmptyCommentCheck.class.php';

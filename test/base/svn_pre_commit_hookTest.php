@@ -66,7 +66,7 @@ The following pre commit check fail:
 
 DETAIL OF THE CHECKS ERRORS:
 Reject minimalistic comment:
-Minimum size is 5 characters
+Commit message has been rejected (too short). Please provide more details about changes you want to commit.
 
 
 EOC;
